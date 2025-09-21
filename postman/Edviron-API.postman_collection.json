@@ -1,0 +1,392 @@
+{
+  "info": {
+    "name": "Edviron School Payments API",
+    "description": "Complete API collection for Edviron School Payments backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\",\n  \"school_id\": \"65b0e6293e9f76a9694d84b4\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.access_token);",
+                  "    pm.test('Login successful', function () {",
+                  "        pm.expect(response.access_token).to.exist;",
+                  "        pm.expect(response.user).to.exist;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@edviron.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/verify",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": \"65b0e6293e9f76a9694d84b4\",\n  \"trustee_id\": \"trustee_001\",\n  \"student_info\": {\n    \"name\": \"John Doe\",\n    \"id\": \"STU001\",\n    \"email\": \"john.doe@school.com\"\n  },\n  \"gateway_name\": \"razorpay\",\n  \"custom_order_id\": \"ORDER_TEST_001\",\n  \"order_amount\": 5000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/create-payment",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "create-payment"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/status/ORDER_TEST_001",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "status", "ORDER_TEST_001"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/transactions?page=1&limit=20&sort=created_at&order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["transactions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "created_at"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/transactions?status=success&school_id=65b0e6293e9f76a9694d84b4&start_date=2024-01-01&end_date=2024-12-31",
+              "host": ["{{base_url}}"],
+              "path": ["transactions"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "success"
+                },
+                {
+                  "key": "school_id",
+                  "value": "65b0e6293e9f76a9694d84b4"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2024-12-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions by School",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/transactions/school/65b0e6293e9f76a9694d84b4?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["transactions", "school", "65b0e6293e9f76a9694d84b4"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/transactions/status/ORDER_001",
+              "host": ["{{base_url}}"],
+              "path": ["transactions", "status", "ORDER_001"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/transactions/stats",
+              "host": ["{{base_url}}"],
+              "path": ["transactions", "stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "Process Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_info\": {\n    \"order_id\": \"ORDER_001\",\n    \"amount\": 5000\n  },\n  \"status\": \"success\",\n  \"transaction_amount\": 5000,\n  \"bank_reference\": \"TXN123456789\",\n  \"payment_mode\": \"card\",\n  \"payment_time\": \"2024-01-15T10:30:00Z\",\n  \"gateway_response\": {\n    \"transaction_id\": \"TXN123456789\",\n    \"payment_method\": \"card\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "webhook"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Webhook Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/webhooks/logs",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "logs"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Data",
+      "item": [
+        {
+          "name": "Create Test Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": \"65b0e6293e9f76a9694d84b4\",\n  \"trustee_id\": \"trustee_test\",\n  \"student_info\": {\n    \"name\": \"Test Student\",\n    \"id\": \"STU_TEST\",\n    \"email\": \"test.student@school.com\"\n  },\n  \"gateway_name\": \"razorpay\",\n  \"custom_order_id\": \"ORDER_TEST_{{$timestamp}}\",\n  \"order_amount\": 2500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/create-payment",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "create-payment"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Simulate Successful Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_info\": {\n    \"order_id\": \"ORDER_TEST_001\",\n    \"amount\": 5000\n  },\n  \"status\": \"success\",\n  \"transaction_amount\": 5000,\n  \"bank_reference\": \"TXN_SUCCESS_{{$timestamp}}\",\n  \"payment_mode\": \"card\",\n  \"payment_time\": \"{{$isoTimestamp}}\",\n  \"gateway_response\": {\n    \"transaction_id\": \"TXN_SUCCESS_{{$timestamp}}\",\n    \"payment_method\": \"card\",\n    \"gateway\": \"razorpay\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "webhook"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Simulate Failed Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_info\": {\n    \"order_id\": \"ORDER_TEST_002\",\n    \"amount\": 3000\n  },\n  \"status\": \"failed\",\n  \"transaction_amount\": 0,\n  \"bank_reference\": null,\n  \"payment_mode\": null,\n  \"payment_time\": null,\n  \"error_message\": \"Payment failed due to insufficient funds\",\n  \"gateway_response\": {\n    \"error_code\": \"INSUFFICIENT_FUNDS\",\n    \"error_message\": \"Payment failed due to insufficient funds\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "webhook"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+

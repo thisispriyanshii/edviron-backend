@@ -1,0 +1,26 @@
+Node.js is working!
+Current directory: C:\Users\priya\Downloads\edvirontask\edviron-backend
+Files in directory:
+.env
+.git
+.gitignore
+.prettierrc
+eslint.config.mjs
+hello.js
+mongo-test.js
+nest-cli.json
+node_modules
+package-lock.json
+package.json
+postman
+query
+README.md
+scripts
+src
+test
+test-http.js
+test-output.js
+test-output.txt
+test-script.js
+tsconfig.build.json
+tsconfig.json
